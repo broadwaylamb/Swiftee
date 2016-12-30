@@ -1,0 +1,3 @@
+import codeedit
+
+codeedit.test()
