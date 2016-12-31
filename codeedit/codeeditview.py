@@ -1,7 +1,7 @@
-import typing
+from typing import Optional
 from PyQt5.QtWidgets import QTextEdit, QWidget
 from PyQt5.QtGui import QWheelEvent, QResizeEvent
-from PyQt5.QtCore import pyqtSlot, QTimer
+from PyQt5.QtCore import pyqtSlot, QTimer, QSize
 from .linenumberrulerview import LineNumberRulerView
 
 
@@ -9,7 +9,7 @@ class CodeEditView(QTextEdit):
 
     __resize_timeout_in_milliseconds = 250
 
-    def __init__(self, parent: typing.Optional[QWidget] = None) -> None:
+    def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
 
         self.__ruler_view: LineNumberRulerView = None
@@ -17,8 +17,8 @@ class CodeEditView(QTextEdit):
         self.__is_ruler_visible = False
         self.__resize_timer = QTimer(self)
         self.__resize_timer.timeout.connect(self.resize_timeout)
-        self.__old_size = self.size()
-        self.__new_size = self.size()
+        self.__old_size: QSize = self.size()
+        self.__new_size: QSize = self.size()
 
     def tile(self) -> None:
         if self.__is_ruler_visible:
@@ -33,7 +33,7 @@ class CodeEditView(QTextEdit):
         return self.__has_ruler
 
     @has_ruler.setter
-    def has_ruler(self, value: bool):
+    def has_ruler(self, value: bool) -> None:
 
         if self.__has_ruler == value:
             return
@@ -58,7 +58,7 @@ class CodeEditView(QTextEdit):
         return self.__is_ruler_visible
 
     @is_ruler_visible.setter
-    def is_ruler_visible(self, value: bool):
+    def is_ruler_visible(self, value: bool) -> None:
 
         if self.__is_ruler_visible == value or not self.__has_ruler:
             return
@@ -77,7 +77,7 @@ class CodeEditView(QTextEdit):
         return self.__ruler_view
 
     @ruler.setter
-    def ruler(self, value: LineNumberRulerView):
+    def ruler(self, value: LineNumberRulerView) -> None:
 
         if self.__is_ruler_visible and self.__ruler_view is not None:
             self.__ruler_view.hide()
@@ -97,18 +97,17 @@ class CodeEditView(QTextEdit):
                 self.__ruler_view.update()
 
     @pyqtSlot()
-    def resize_timeout(self):
+    def resize_timeout(self) -> None:
         self.__resize_timer.stop()
-        print("resize timeout")
+
         super(CodeEditView, self).resizeEvent(QResizeEvent(self.__new_size, self.__old_size))
 
-    def resizeEvent(self, event: QResizeEvent):
+    def resizeEvent(self, event: QResizeEvent) -> None:
 
         # When there are too many lines of code, horizontal resizing is too laggy because `resizeEvent` is
         # invoked too often and therefore `repaintEvent` is invoked too often as well.
         # So we defer invoking super's `resizeEvent` using QTimer.
         # See also http://robertfelten.com/2013/08/20/tip-for-resizing-qt-windows/
-        print("resize event")
 
         # If resizing is only begun, we set the `self.__old_size` variable to the current size
         # in order to invoke super's `resizeEvent` with correct parameters later.

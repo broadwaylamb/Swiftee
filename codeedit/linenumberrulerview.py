@@ -1,24 +1,29 @@
-import typing
+import sys
+from typing import Optional, List
 from PyQt5.QtWidgets import QWidget
-from PyQt5.QtGui import QPainter, QTextBlock, QTextCursor, QMouseEvent, QPaintEvent, QColor
+from PyQt5.QtGui import QPainter, QTextBlock, QTextCursor, QMouseEvent, QPaintEvent, QColor, QFontMetrics, QFont
 from PyQt5.QtCore import QRect, QPoint, Qt
+try:
+    from .codeeditview import CodeEditView
+except ImportError:
+    CodeEditView = sys.modules[__package__ + ".codeeditview"]
+from .rulermarker import RulerMarker
 
 
 class LineNumberRulerView(QWidget):
 
+    # TODO: Make this equal to 4 widths of the current font
     __ruler_thickness = 32
 
-    def __init__(self, code_edit_view) -> None:
+    def __init__(self, code_edit_view: CodeEditView) -> None:
         super().__init__(code_edit_view)
 
-        from .codeeditview import CodeEditView
-
         self.__code_edit: CodeEditView = code_edit_view
-        self.__markers = []
-        self.__accessory_widget: typing.Optional[QWidget] = None
-        self.__rule_thickness: int = LineNumberRulerView.__ruler_thickness
-        self.__reserved_thickness_for_markers: int = 0
-        self.__reserved_thickness_for_accessory_widget: int = 0
+        self.__markers: List[RulerMarker] = []
+        self.__accessory_widget: Optional[QWidget] = None
+        self.__rule_thickness = LineNumberRulerView.__ruler_thickness
+        self.__reserved_thickness_for_markers = 0
+        self.__reserved_thickness_for_accessory_widget = 0
 
         self.__code_edit.textChanged.connect(self.update)
         self.__code_edit.cursorPositionChanged.connect(self.update)
@@ -26,20 +31,20 @@ class LineNumberRulerView(QWidget):
         self.__code_edit.verticalScrollBar().valueChanged.connect(self.update)
 
     @property
-    def code_edit(self):
+    def code_edit(self) -> CodeEditView:
         return self.__code_edit
 
     @code_edit.setter
-    def code_edit(self, value):
+    def code_edit(self, value: CodeEditView) -> None:
         self.__code_edit = value
 
     @property
-    def accessory_widget(self) -> typing.Optional[QWidget]:
+    def accessory_widget(self) -> Optional[QWidget]:
         return self.__accessory_widget
 
     @accessory_widget.setter
-    def accessory_widget(self, value: typing.Optional[QWidget]):
-        # TODO: support for accessory widgets is not implemented
+    def accessory_widget(self, value: Optional[QWidget]) -> None:
+        # TODO: Implement support for accessory widgets
         self.__accessory_widget = value
         self.update()
 
@@ -54,62 +59,63 @@ class LineNumberRulerView(QWidget):
             self.reserved_thickness_for_markers = max_thickness
 
     @property
-    def markers(self):
+    def markers(self) -> List[RulerMarker]:
         return self.__markers
 
     @markers.setter
-    def markers(self, value):
+    def markers(self, value: List[RulerMarker]):
         self.__markers = value
         self.update()
 
-    def add_marker(self, marker):
+    def add_marker(self, marker: RulerMarker):
         marker_thickness: int = marker.thickness_required_in_ruler
 
         if marker_thickness > self.reserved_thickness_for_markers:
             self.reserved_thickness_for_markers = marker_thickness
-
-        if not self.__markers:
-            self.__markers = [marker]
-        else:
             self.__markers.append(marker)
 
         self.update()
     
-    def remove_marker(self, marker):
+    def remove_marker(self, marker: RulerMarker) -> None:
         if not self.__markers:
             return
 
         self.__markers.remove(marker)
         self.update()
 
-    def track_marker(self, marker, event: QMouseEvent) -> bool:
+    def track_marker(self, marker: RulerMarker, event: QMouseEvent) -> bool:
         return marker.trackMouse(event, True)
 
     def __first_visible_block(self) -> QTextBlock:
         cursor = self.__code_edit.cursorForPosition(QPoint(0, 0))
         return cursor.block()
 
-    def __last_visible_block(self) -> QTextBlock:
-        cursor = self.__code_edit.cursorForPosition(self.__code_edit.geometry().bottomLeft())
-        return cursor.block().next()
-
     @staticmethod
-    def __draw_line_number(line_number: int, y: int, painter: QPainter):
+    def __draw_line_number(line_number: int, y: int, painter: QPainter) -> None:
         painter.drawText(QPoint(0, y), str(line_number))
     
-    def _draw_line_numbers_in_rect(self, rect: QRect):
+    def _draw_line_numbers_in_rect(self, rect: QRect) -> None:
         painter = QPainter(self)
         first_visible_block = self.__first_visible_block()
-        last_visible_block = self.__last_visible_block()
 
         block = first_visible_block
-        while block.isValid() and block != last_visible_block:
+
+        line_number_font_metrics = QFontMetrics(painter.font(), painter.device())
+
+        while block.isValid():
             line_number = block.blockNumber() + 1
-            y = self.__code_edit.cursorRect(QTextCursor(block)).bottom()
+
+            cursor = QTextCursor(block)
+
+            y = self.__code_edit.cursorRect(cursor).bottom()
+
+            if y >= rect.bottom() + line_number_font_metrics.height():
+                break
+
             self.__draw_line_number(line_number, y, painter)
             block = block.next()
     
-    def _draw_markers_in_rect(self, rect: QRect):
+    def _draw_markers_in_rect(self, rect: QRect) -> None:
         for marker in self.__markers:
             marker.drawRect(rect)
 
@@ -118,7 +124,7 @@ class LineNumberRulerView(QWidget):
         return self.__reserved_thickness_for_accessory_widget
 
     @reserved_thickness_for_accessory_widget.setter
-    def reserved_thickness_for_accessory_widget(self, value: int):
+    def reserved_thickness_for_accessory_widget(self, value: int) -> None:
         self.__reserved_thickness_for_accessory_widget = value
         self.__code_edit.tile()
 
@@ -127,7 +133,7 @@ class LineNumberRulerView(QWidget):
         return self.__rule_thickness
 
     @rule_thickness.setter
-    def rule_thickness(self, value: int):
+    def rule_thickness(self, value: int) -> None:
         self.__rule_thickness = value
         self.__code_edit.tile()
 
@@ -136,7 +142,7 @@ class LineNumberRulerView(QWidget):
         return self.__reserved_thickness_for_markers
 
     @reserved_thickness_for_markers.setter
-    def reserved_thickness_for_markers(self, value: int):
+    def reserved_thickness_for_markers(self, value: int) -> None:
         self.__reserved_thickness_for_markers = value
         self.__code_edit.tile()
 
@@ -146,7 +152,7 @@ class LineNumberRulerView(QWidget):
                self.reserved_thickness_for_markers +\
                self.reserved_thickness_for_accessory_widget
 
-    def paintEvent(self, event: QPaintEvent):
+    def paintEvent(self, event: QPaintEvent) -> None:
         super(LineNumberRulerView, self).paintEvent(event)
 
         painter = QPainter(self)
@@ -155,4 +161,3 @@ class LineNumberRulerView(QWidget):
 
         self._draw_line_numbers_in_rect(event.rect())
         self._draw_markers_in_rect(event.rect())
-
