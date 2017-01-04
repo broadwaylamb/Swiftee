@@ -7,26 +7,22 @@ __all__ = ["CodeEditView", "LineNumberRulerView", "RulerMarker"]
 
 def test():
     import sys
-    from PyQt5.QtWidgets import QApplication, QMainWindow
+    from PyQt5.QtWidgets import QApplication, QWidget
     from PyQt5.QtCore import pyqtSlot
-    from codeedit.test_ui import Ui_MainWindow
+    import PyQt5.uic as uic
 
-    class MainWindow(QMainWindow):
+    class CodeEditWindow(QWidget):
 
         def __init__(self):
-            super(MainWindow, self).__init__()
-            self.ui = Ui_MainWindow()
-            self.ui.setupUi(self)
-            self.ui.codeEdit.has_ruler = True
+            super(CodeEditWindow, self).__init__()
+            uic.loadUi("codeedit/test_ui.ui", self)
+            self.code_edit_view.has_ruler = True
 
         @pyqtSlot()
-        def on_push_button_clicked(self):
-            if self.ui.codeEdit.is_ruler_visible:
-                self.ui.codeEdit.is_ruler_visible = False
-            else:
-                self.ui.codeEdit.is_ruler_visible = True
+        def on_button_clicked(self):
+            self.code_edit_view.is_ruler_visible = not self.code_edit_view.is_ruler_visible
 
     app = QApplication(sys.argv)
-    window = MainWindow()
+    window = CodeEditWindow()
     window.show()
     sys.exit(app.exec_())

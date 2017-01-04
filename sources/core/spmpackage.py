@@ -1,5 +1,5 @@
 import subprocess
-from typing import List
+from typing import Callable
 from enum import Enum
 from .listening import listen_process
 
@@ -19,14 +19,10 @@ class SPMPackage(object):
     @classmethod
     def initialize(cls,
                    working_directory: str,
-                   build_path: str,
                    package_type: PackageType,
-                   c_compiler_flags: List[str],
-                   swift_compiler_flags: List[str],
-                   linker_flags: List[str],
-                   stdout_callback,
-                   stderr_callback,
-                   completion_callback) -> None:
+                   stdout_callback: Callable[[str], None],
+                   stderr_callback: Callable[[str], None],
+                   completion_callback: Callable[[int], None]) -> None:
 
         process = subprocess.Popen(
             [
@@ -34,11 +30,7 @@ class SPMPackage(object):
                 "init",
                 "--type", package_type.value,
                 "--chdir", working_directory,
-                "--build-path", build_path
-            ] +
-            ["-Xcc %s" % flag for flag in c_compiler_flags] +
-            ["-Xswiftc %s" % flag for flag in swift_compiler_flags] +
-            ["-Xlinker %s" % flag for flag in linker_flags],
+            ],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE
         )

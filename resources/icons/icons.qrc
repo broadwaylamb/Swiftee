@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="icons">
+        <file>executable.png</file>
+        <file>library.png</file>
+        <file>empty.png</file>
+    </qresource>
+</RCC>

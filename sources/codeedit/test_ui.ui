@@ -1,44 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>code_edit_window</class>
+ <widget class="QWidget" name="code_edit_window">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>564</width>
-    <height>438</height>
+    <width>563</width>
+    <height>394</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Form</string>
   </property>
-  <widget class="QWidget" name="centralWidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="CodeEditView" name="codeEdit"/>
-    </item>
-    <item row="0" column="1">
-     <widget class="QPushButton" name="pushButton">
-      <property name="text">
-       <string>Show Line Numbers</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QMenuBar" name="menuBar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>564</width>
-     <height>22</height>
-    </rect>
-   </property>
-  </widget>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="CodeEditView" name="code_edit_view"/>
+   </item>
+   <item row="1" column="0">
+    <widget class="QPushButton" name="show_line_numbers_button">
+     <property name="text">
+      <string>Show Line Numbers</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
- <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
    <class>CodeEditView</class>
@@ -49,18 +36,18 @@
  <resources/>
  <connections>
   <connection>
-   <sender>pushButton</sender>
+   <sender>show_line_numbers_button</sender>
    <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>on_push_button_clicked()</slot>
+   <receiver>code_edit_window</receiver>
+   <slot>on_button_clicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>476</x>
-     <y>231</y>
+     <x>281</x>
+     <y>373</y>
     </hint>
     <hint type="destinationlabel">
      <x>281</x>
-     <y>218</y>
+     <y>196</y>
     </hint>
    </hints>
   </connection>

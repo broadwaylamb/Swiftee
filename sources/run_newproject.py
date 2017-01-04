@@ -1,0 +1,3 @@
+import newproject
+
+newproject.test()
