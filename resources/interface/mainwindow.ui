@@ -20,7 +20,7 @@
             <string>Swiftee</string>
         </property>
         <widget class="QWidget" name="centralwidget">
-            <layout class="QVBoxLayout" name="verticalLayout">
+            <layout class="QVBoxLayout" name="central_widget_layout">
                 <property name="spacing">
                     <number>0</number>
                 </property>
@@ -82,6 +82,9 @@
                                                 <height>28</height>
                                             </size>
                                         </property>
+                                        <property name="styleSheet">
+                                            <string notr="true">QToolBar { background: palette(window); border-color: palette(mid); border-width: 0px 0px 1px 0px; border-style: solid; }</string>
+                                        </property>
                                         <property name="movable">
                                             <bool>false</bool>
                                         </property>
@@ -137,6 +140,9 @@
                                                     <height>28</height>
                                                 </size>
                                             </property>
+                                            <property name="styleSheet">
+                                                <string notr="true">QToolBar { background: white; border-color: palette(mid); border-width: 0px 0px 1px 0px; border-style: solid; }</string>
+                                            </property>
                                             <property name="movable">
                                                 <bool>false</bool>
                                             </property>
@@ -149,7 +155,11 @@
                                         </widget>
                                     </item>
                                     <item>
-                                        <widget class="CodeEditView" name="code_edit_view"/>
+                                        <widget class="CodeEditView" name="code_edit_view">
+                                            <property name="styleSheet">
+                                                <string notr="true">border: none;</string>
+                                            </property>
+                                        </widget>
                                     </item>
                                 </layout>
                             </widget>
@@ -171,6 +181,9 @@
                                                     <width>16777215</width>
                                                     <height>28</height>
                                                 </size>
+                                            </property>
+                                            <property name="styleSheet">
+                                                <string notr="true">QToolBar { background: palette(window); border-color: palette(mid); border-width: 1px 0px 1px 0px; border-style: solid; }</string>
                                             </property>
                                             <property name="movable">
                                                 <bool>false</bool>
@@ -197,7 +210,11 @@
                                                         <number>0</number>
                                                     </property>
                                                     <item>
-                                                        <widget class="QTreeView" name="variables_view"/>
+                                                        <widget class="QTreeView" name="variables_view">
+                                                            <property name="styleSheet">
+                                                                <string notr="true">border: none; selection-color: white;</string>
+                                                            </property>
+                                                        </widget>
                                                     </item>
                                                     <item>
                                                         <widget class="QToolBar" name="variables_toolbar">
@@ -212,6 +229,9 @@
                                                                     <width>16777215</width>
                                                                     <height>28</height>
                                                                 </size>
+                                                            </property>
+                                                            <property name="styleSheet">
+                                                                <string notr="true">QToolBar { background: white; border-color: palette(mid); border-width: 1px 0px 0px 0px; border-style: solid; }</string>
                                                             </property>
                                                             <property name="movable">
                                                                 <bool>false</bool>
@@ -232,7 +252,14 @@
                                                         <number>0</number>
                                                     </property>
                                                     <item>
-                                                        <widget class="QTextEdit" name="console_view"/>
+                                                        <widget class="QTextEdit" name="console_view">
+                                                            <property name="styleSheet">
+                                                                <string notr="true">border: none;</string>
+                                                            </property>
+                                                            <property name="textInteractionFlags">
+                                                                <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                                                            </property>
+                                                        </widget>
                                                     </item>
                                                     <item>
                                                         <widget class="QToolBar" name="console_toolbar">
@@ -247,6 +274,9 @@
                                                                     <width>16777215</width>
                                                                     <height>28</height>
                                                                 </size>
+                                                            </property>
+                                                            <property name="styleSheet">
+                                                                <string notr="true">QToolBar { background: white; border-color: palette(mid); border-width: 1px 0px 0px 0px; border-style: solid; }</string>
                                                             </property>
                                                             <property name="movable">
                                                                 <bool>false</bool>
@@ -292,6 +322,9 @@
                                                     <height>28</height>
                                                 </size>
                                             </property>
+                                            <property name="styleSheet">
+                                                <string notr="true">QToolBar { background: palette(window); border-color: palette(mid); border-width: 0px 0px 1px 0px; border-style: solid; }</string>
+                                            </property>
                                             <property name="movable">
                                                 <bool>false</bool>
                                             </property>
@@ -331,6 +364,9 @@
                                                     <height>28</height>
                                                 </size>
                                             </property>
+                                            <property name="styleSheet">
+                                                <string notr="true">QToolBar { background: white; border-color: palette(mid); border-width: 1px 0px 1px 0px; border-style: solid; }</string>
+                                            </property>
                                             <property name="movable">
                                                 <bool>false</bool>
                                             </property>
@@ -350,7 +386,9 @@
                                                     <height>190</height>
                                                 </size>
                                             </property>
-                                            <zorder>console_view</zorder>
+                                            <property name="styleSheet">
+                                                <string notr="true">background-color: white</string>
+                                            </property>
                                         </widget>
                                     </item>
                                 </layout>
@@ -389,7 +427,6 @@
                 <addaction name="actionRedo"/>
                 <addaction name="separator"/>
                 <addaction name="actionCopy"/>
-                <addaction name="actionCopy_2"/>
             </widget>
             <addaction name="menu_file"/>
             <addaction name="menuEdit"/>
@@ -414,17 +451,12 @@
                 <string>Cut</string>
             </property>
         </action>
-        <action name="actionCopy_2">
-            <property name="text">
-                <string>Copy</string>
-            </property>
-        </action>
     </widget>
     <customwidgets>
         <customwidget>
             <class>CodeEditView</class>
             <extends>QTextEdit</extends>
-            <header>codeeditview</header>
+            <header>sources.codeedit.codeeditview</header>
         </customwidget>
     </customwidgets>
     <resources/>
