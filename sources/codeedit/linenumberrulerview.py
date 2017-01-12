@@ -161,3 +161,7 @@ class LineNumberRulerView(QWidget):
 
         self._draw_line_numbers_in_rect(event.rect())
         self._draw_markers_in_rect(event.rect())
+
+    def wheelEvent(self, event) -> None:
+        super(LineNumberRulerView, self).wheelEvent(event)
+        self.__code_edit.wheelEvent(event)
